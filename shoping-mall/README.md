@@ -49,4 +49,4 @@ package.json 运行项目后面配置 `--open` 可以直接在启动项目后打
 
 7.
 项目中采用less样式，浏览器不识别less文件的样式，需要通过less、less-loader进行处理，转化为css浏览器才能识别，最新版本可能会有问题，可以用@5安装5版本
-方法：npm install --save less less-loader，然后在style标签中加伤attr为 `lang="less"` 这样才能正常识别
+方法：npm install --save less less-loader，然后在style标签中加伤attr为 `lang="less"` 这样才能正常识别，style标签中的scoped属性意思为当前样式只为当前组件生效，实现了样式的模块化

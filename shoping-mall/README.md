@@ -56,3 +56,16 @@ package.json 运行项目后面配置 `--open` 可以直接在启动项目后打
 7.
 项目中采用less样式，浏览器不识别less文件的样式，需要通过less、less-loader进行处理，转化为css浏览器才能识别，最新版本可能会有问题，可以用@5安装5版本
 方法：npm install --save less less-loader，然后在style标签中加伤attr为 `lang="less"` 这样才能正常识别，style标签中的scoped属性意思为当前样式只为当前组件生效，实现了样式的模块化
+
+8.
+路由组件：pages | views 文件夹下，在router文件内引入，用router-view展示
+非路由组件：components 文件夹下，以标签的形式引入使用
+
+vue中路由组件和非路由组件注册完以后都有以下两个属性，不像react非路由组件需要用withRoute包裹非路由组件才能获取路由信息
+$route 一般用来获取路由信息【路径，query，params等】
+$router 一般进行编程式导航进行路由跳转【push | replace等】
+
+路由跳转有两种形式：
+声明式导航：router-link
+编程式导航：push | replace
+声明式导航 < 编程式导航，后者能做到更多的业务逻辑

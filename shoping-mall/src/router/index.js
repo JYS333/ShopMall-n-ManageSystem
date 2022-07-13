@@ -29,19 +29,36 @@ export default new VueRouter({
     // 配置路由 key-value对儿， path-component 路径-组件 
     routes:[
         {
+            name:'home',
             path: '/home',
-            component: Home
+            component: Home,
+            meta:{
+                // 自定义属性只支持在meta中扩展，每个route对象的属性是固定的
+                show:true, // 用来自定义控制(通过访问$route.meta.show属性)由组件的显示与隐藏
+            }
         },
         {
+            name:'login',
             path: '/login',
-            component: Login
+            component: Login,
+            meta:{
+                show:false
+            }
         },
         {
+            name:'register',
             path: '/register',
-            component: Register
+            component: Register,
+            meta:{
+                show:false
+            }
         },{
-            path: '/search',
-            component: Search
+            name:'search',
+            path: '/search/:keyword?', // 后面加上?表示可传可不传，否则路由路径会出错
+            component: Search,
+            meta:{
+                show:true
+            }
         },
         // 重定向，从其他路径定向到首页Home
         {

@@ -38,6 +38,7 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
+            v-model="keyword"
           />
           <button
             class="sui-btn btn-xlarge btn-danger"
@@ -55,9 +56,28 @@
 <script>
 export default {
   name: "",
+  data() {
+    return {
+      keyword: "",
+    };
+  },
   methods: {
     goSearch() {
-      this.$router.push("/search");
+      console.log("输入的搜索关键字：", this.keyword);
+      // 路由传参
+      // 1.字符串：需要在路由配置文件index中添加路径占位参数并用「:」开头 ，然后在跳转时加上params参数 或者 query参数（以问号为起始）
+      // this.$router.push(
+      //   "/search/" + this.keyword + "?k=" + this.keyword.toLowerCase()
+      // );
+
+      // 2.模板字符串同上
+
+      // 3.对象的形式，需要在路由配置文件中用name标识，这里才能访问到，也可以用path参数，但path不能结合params和query一起使用的
+      this.$router.push({
+        name: "search",
+        params: { keyword: this.keyword || undefined }, // undefined用来放置传入的params参数为空串，否则路径还是会出问题
+        query: { k: this.keyword.toUpperCase() },
+      });
     },
   },
 };

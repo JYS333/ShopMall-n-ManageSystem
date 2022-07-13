@@ -66,6 +66,6 @@ $route 一般用来获取路由信息【路径，query，params等】
 $router 一般进行编程式导航进行路由跳转【push | replace等】
 
 路由跳转有两种形式：
-声明式导航：router-link
-编程式导航：push | replace
+声明式导航：router-link（必须有 `to` 属性）
+编程式导航：push | replace（3+版本的vue-router频繁点击会报错，需重写俩方法）
 声明式导航 < 编程式导航，后者能做到更多的业务逻辑

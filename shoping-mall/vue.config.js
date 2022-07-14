@@ -3,6 +3,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   // 关闭eslint自动校验工具
   lintOnSave: false,
+  // 代理跨域
   devServer:{
     proxy:{
       "/api":{

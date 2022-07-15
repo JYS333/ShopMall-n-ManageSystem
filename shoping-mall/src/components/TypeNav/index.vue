@@ -1695,6 +1695,12 @@
 <script>
 export default {
   name: "TypeNav",
+  // 组件挂载完毕就可以去获取数据了
+  mounted() {
+    console.log("this === router", this.$router);
+    console.log("this === store", this.$store);
+    // this.$store.dispatch("categoryList");
+  },
 };
 </script>
 

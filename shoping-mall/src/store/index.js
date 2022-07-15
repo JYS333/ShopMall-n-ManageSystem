@@ -8,7 +8,7 @@ import home from './home';
 import search from './search';
 
 // 对外暴露store类的一个实例
-export default new Vuex.Store({
+const store = new Vuex.Store({
     // 储存数据的地方
     // state: {},
     // 修改state的手段
@@ -25,3 +25,4 @@ export default new Vuex.Store({
         search
     }
 })
+export default store;

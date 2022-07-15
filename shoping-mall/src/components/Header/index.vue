@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     goSearch() {
-      console.log("输入的搜索关键字：", this.keyword);
+      console.log("输入的搜索关键字：", this.keyword, this.$store);
       // 路由传参
       // 1.字符串：需要在路由配置文件index中添加路径占位参数并用「:」开头 ，然后在跳转时加上params参数 或者 query参数（以问号为起始）
       // this.$router.push(

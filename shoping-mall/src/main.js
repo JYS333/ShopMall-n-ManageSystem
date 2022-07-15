@@ -12,8 +12,6 @@ Vue.component(TypeNav.name, TypeNav);
 
 // Vue.config.productionTip = false
 
-console.log("store ",store);
-
 export default new Vue({
   render: h => h(App),
   // 注册路由

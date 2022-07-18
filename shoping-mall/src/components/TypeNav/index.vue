@@ -15,38 +15,15 @@
         <a href="###">秒杀</a>
       </nav>
       <div class="sort">
-        <div class="all-sort-list2">
-          <!-- <div class="item bo">
-            <h3>
-              <a href="">图书、音像、数字商品</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div class="subitem">
-                <dl class="fore">
-                  <dt>
-                    <a href="">电子书</a>
-                  </dt>
-                  <dd>
-                    <em>
-                      <a href="">婚恋/两性</a>
-                    </em>
-                    <em>
-                      <a href="">文学</a>
-                    </em>
-                    <em>
-                      <a href="">经管</a>
-                    </em>
-                    <em>
-                      <a href="">畅读VIP</a>
-                    </em>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div> -->
+        <!-- 利用事件委派 和 编程式导航push|replace -->
+        <div class="all-sort-list2" @click="goSearch">
           <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
             <h3>
-              <a href="">{{ c1.categoryName }}</a>
+              <a
+                :data-categoryName="c1.categoryName"
+                :data-categoryType1="c1.categoryId"
+                >{{ c1.categoryName }}</a
+              >
             </h3>
             <div class="item-list clearfix">
               <div
@@ -56,18 +33,25 @@
               >
                 <dl class="fore">
                   <dt>
-                    <a href="">{{ c2.categoryName }}</a>
+                    <a
+                      :data-categoryName="c2.categoryName"
+                      :data-categoryType2="c2.categoryId"
+                      >{{ c2.categoryName }}</a
+                    >
                   </dt>
                   <dd>
                     <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                      <a href="">{{ c3.categoryName }}</a>
+                      <a
+                        :data-categoryName="c3.categoryName"
+                        :data-categoryType="c3.categoryId"
+                        >{{ c3.categoryName }}</a
+                      >
                     </em>
                   </dd>
                 </dl>
               </div>
             </div>
           </div>
-          -->
         </div>
       </div>
     </div>
@@ -76,9 +60,13 @@
 
 <script>
 import { mapState } from "vuex";
+import throttle from "lodash"; // 引入lodash全部的功能
 
 export default {
   name: "TypeNav",
+  data() {
+    return {};
+  },
   // 组件挂载完毕就可以去获取数据了
   mounted() {
     // console.log("this === store", this.$store); // 最新的4.0.2版本的vuex访问不到$store，退回到3.6.2后就有了$store
@@ -93,6 +81,38 @@ export default {
         return state.home.categoryList;
       },
     }),
+  },
+  methods: {
+    // throttle回调函数不要用箭头函数，可能回头上下文this指向问题
+    // changeIndex: throttle(function (index) {
+    //   this.currentIndex = index;
+    // }, 50),
+    goSearch(event) {
+      // 需要知道点击的是a标签
+      // 需要知道参数
+      // 注意a标签的href默认跳转要关了才有下面这些东西
+      let element = event.target;
+      console.log(element.dataset);
+      // 需要当前这个事件节点【h3 a dt dl】，需要带有data-categoryName数据的，节点有个dataset属性 element.dataset
+      let { categoryname, categorytype1, categorytype2, categorytype3 } =
+        element.dataset; // dataset将属性名默认都改成小写
+      if (categoryname) {
+        // 能进来说明点击的都是a标签，拿到了绑定的dataset数据
+        // 然后进行判断三级标签的内容
+        let location = { name: "search" };
+        let query = { categoryName: categoryname };
+        if (categorytype1) {
+          // 点击三级分类
+          query.categoryId = categorytype1;
+        } else if (categorytype2) {
+          query.categoryId = categorytype2;
+        } else if (categorytype3) {
+          query.categoryId = categorytype3;
+        }
+        location.query = query;
+        this.$router.push(location); // 完成路由跳转，只需要配路径参数和query
+      }
+    },
   },
 };
 </script>
@@ -186,6 +206,10 @@ export default {
                   text-align: right;
                   padding: 3px 6px 0 0;
                   font-weight: 700;
+
+                  a:hover {
+                    color: skyblue;
+                  }
                 }
 
                 dd {
@@ -201,6 +225,12 @@ export default {
                     padding: 0 8px;
                     margin-top: 5px;
                     border-left: 1px solid #ccc;
+
+                    a:hover {
+                      color: skyblue;
+                      // font-weight: larger;
+                      // background-color: skyblue;
+                    }
                   }
                 }
               }
@@ -208,6 +238,8 @@ export default {
           }
 
           &:hover {
+            background: skyblue;
+            cursor: pointer;
             .item-list {
               display: block;
             }

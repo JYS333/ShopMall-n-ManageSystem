@@ -103,6 +103,10 @@
 <script>
 export default {
   name: "ListContainer",
+  mounted() {
+    // 发送ajax，将数据存储在store
+    this.$store.dispatch("getBannerList");
+  },
 };
 </script>
 

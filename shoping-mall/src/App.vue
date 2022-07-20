@@ -20,6 +20,11 @@ export default {
     Header,
     Footer,
   },
+  mounted() {
+    // 把放入store仓库的操作放在app入口中，后续直接从store仓库中获取，就不用每次mount TypeNav组件时再拉取一遍又一遍了
+    // console.log("this === store", this.$store); // 最新的4.0.2版本的vuex访问不到$store，退回到3.6.2后就有了$store
+    this.$store.dispatch("categoryList"); // dispatch的都是actions
+  },
 };
 </script>
 

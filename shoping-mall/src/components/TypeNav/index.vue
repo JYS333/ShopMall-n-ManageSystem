@@ -3,7 +3,9 @@
   <div class="type-nav">
     <!-- <h1>{{ categoryList }}</h1> -->
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
+      <h2 class="all" @mouseenter="enterShow" @mouseleave="leaveShow">
+        全部商品分类
+      </h2>
       <nav class="nav">
         <a href="###">服装城</a>
         <a href="###">美妆馆</a>
@@ -14,46 +16,48 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <!-- 利用事件委派 和 编程式导航push|replace -->
-        <div class="all-sort-list2" @click="goSearch">
-          <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
-            <h3>
-              <a
-                :data-categoryName="c1.categoryName"
-                :data-categoryType1="c1.categoryId"
-                >{{ c1.categoryName }}</a
-              >
-            </h3>
-            <div class="item-list clearfix">
-              <div
-                class="subitem"
-                v-for="c2 in c1.categoryChild"
-                :key="c2.categoryId"
-              >
-                <dl class="fore">
-                  <dt>
-                    <a
-                      :data-categoryName="c2.categoryName"
-                      :data-categoryType2="c2.categoryId"
-                      >{{ c2.categoryName }}</a
-                    >
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+      <transition name="sort">
+        <div class="sort" v-show="show">
+          <!-- 利用事件委派 和 编程式导航push|replace -->
+          <div class="all-sort-list2" @click="goSearch">
+            <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
+              <h3>
+                <a
+                  :data-categoryName="c1.categoryName"
+                  :data-categoryType1="c1.categoryId"
+                  >{{ c1.categoryName }}</a
+                >
+              </h3>
+              <div class="item-list clearfix">
+                <div
+                  class="subitem"
+                  v-for="c2 in c1.categoryChild"
+                  :key="c2.categoryId"
+                >
+                  <dl class="fore">
+                    <dt>
                       <a
-                        :data-categoryName="c3.categoryName"
-                        :data-categoryType="c3.categoryId"
-                        >{{ c3.categoryName }}</a
+                        :data-categoryName="c2.categoryName"
+                        :data-categoryType2="c2.categoryId"
+                        >{{ c2.categoryName }}</a
                       >
-                    </em>
-                  </dd>
-                </dl>
+                    </dt>
+                    <dd>
+                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                        <a
+                          :data-categoryName="c3.categoryName"
+                          :data-categoryType="c3.categoryId"
+                          >{{ c3.categoryName }}</a
+                        >
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -65,12 +69,14 @@ import throttle from "lodash"; // 引入lodash全部的功能
 export default {
   name: "TypeNav",
   data() {
-    return {};
+    return {
+      show: true,
+    };
   },
   // 组件挂载完毕就可以去获取数据了
   mounted() {
-    // console.log("this === store", this.$store); // 最新的4.0.2版本的vuex访问不到$store，退回到3.6.2后就有了$store
-    this.$store.dispatch("categoryList"); // dispatch的都是actions
+    // search组件挂载完毕时show为false，可以通过路由判断
+    if (this.$route.path != "/home") this.show = false;
   },
   computed: {
     // mapState的作用类似于redux的connect高阶函数，将vuex管理的statemap到当前组件的props中去
@@ -103,15 +109,26 @@ export default {
         let query = { categoryName: categoryname };
         if (categorytype1) {
           // 点击三级分类
-          query.categoryId = categorytype1;
+          query.category1Id = categorytype1;
         } else if (categorytype2) {
-          query.categoryId = categorytype2;
+          query.category2Id = categorytype2;
         } else if (categorytype3) {
-          query.categoryId = categorytype3;
+          query.category3Id = categorytype3;
         }
-        location.query = query;
-        this.$router.push(location); // 完成路由跳转，只需要配路径参数和query
+        // 如果路由跳转的时候带有params参数，则也得传递过去，用来将先点分类后搜索两次的参数合并
+        if (this.$route.params) {
+          location.params = this.$route.params;
+          location.query = query;
+          this.$router.push(location); // 完成路由跳转，只需要配路径参数和query
+        }
       }
+    },
+    enterShow() {
+      // 鼠标进入时显示一级列表
+      if (this.$route.path != "/home") this.show = true;
+    },
+    leaveShow() {
+      if (this.$route.path != "/home") this.show = false;
     },
   },
 };
@@ -246,6 +263,17 @@ export default {
           }
         }
       }
+    }
+
+    .sort-enter {
+      // 过渡动画开始
+      height: 0px;
+    }
+    .sort-enter-to {
+      height: 461px;
+    }
+    .sort-enter-active {
+      transition: all 0.5s linear;
     }
   }
 }

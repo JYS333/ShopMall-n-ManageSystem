@@ -73,11 +73,14 @@ export default {
       // 2.模板字符串同上
 
       // 3.对象的形式，需要在路由配置文件中用name标识，这里才能访问到，也可以用path参数，但path不能结合params和query一起使用的
-      this.$router.push({
-        name: "search",
-        params: { keyword: this.keyword || undefined }, // undefined用来放置传入的params参数为空串，否则路径还是会出问题
-        query: { k: this.keyword.toUpperCase() },
-      });
+      if (this.$router.query) {
+        // 如果有query参数，也得带过去，用来将先点搜索后点分类两次的参数合并
+        let location = {
+          name: "search",
+          params: { keyword: this.keyword || undefined }, // undefined用来放置传入的params参数为空串，否则路径还是会出问题
+        };
+        this.$router.push(location);
+      }
     },
   },
 };

@@ -4,11 +4,14 @@ import App from './App.vue'
 import router from '@/router'
 import store from "@/store";
 
+import '@/mock/mockServe';
+
 // 引入三级联动组件，为全局组件
 import TypeNav from '@/components/TypeNav';
 
 // 第一个参数为组件名称，第二个参数为组件
 Vue.component(TypeNav.name, TypeNav);
+
 
 // Vue.config.productionTip = false
 

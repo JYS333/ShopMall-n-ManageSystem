@@ -90,3 +90,10 @@ vuex默认安装最新版本，当前为4.0.2，会导致store挂载到全局vue
 
 14.
 过渡动画：要求 组件|元素 务必有v-if或者v-show才可以进行过渡动画
+
+15.
+项目src下创建mock文件夹提供假数据
+在mock下准备对应的json数据，json数据要格式化一下不能留有空格
+把mock需要的图片数据放到public下
+开始mock虚拟数据，创建mockServe.js
+把mockServe文件在入口文件中引入，执行一次

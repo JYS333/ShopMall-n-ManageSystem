@@ -1,5 +1,12 @@
 ### 用来记录学习过程中遇到的问题
 
+接口地址：
+已失效但可以查询信息
+http://39.98.123.211:8170/swagger-ui.html
+http://39.98.123.211:8216/swagger-ui.html
+有效的接口地址
+http://gmall-h5-api.atguigu.cn
+
 1.
 组件间的6种通信方式
 

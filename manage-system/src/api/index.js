@@ -1,11 +1,11 @@
 // 集合所有api
-import * as tradeMark from './product/tradeMark';
+import * as trademark from './product/trademark';
 import * as attr from './product/attr';
 import * as spu from './product/spu';
 import * as sku from './product/sku';
 
 export default{
-    tradeMark,
+    trademark,
     attr,
     sku,
     spu

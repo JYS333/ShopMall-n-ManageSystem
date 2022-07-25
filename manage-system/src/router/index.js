@@ -63,7 +63,7 @@ export const constantRoutes = [
     meta: {title: '商品管理', icon: 'el-icon-goods'},
     children:[
       {
-        path: '/tradeMark',
+        path: '/trademark',
         name: 'TradeMark',
         component: () => import('@/views/product/TradeMark'),
         meta: {title:'品牌管理'}

@@ -35,6 +35,11 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
+// 引入api并挂到全局vue原型上
+import API from '@/api'
+// 组件实例的原型的原型指向Vue.prototype，可以让组件在任何地方使用
+Vue.prototype.$API = API
+
 new Vue({
   el: '#app',
   router,

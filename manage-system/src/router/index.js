@@ -78,13 +78,13 @@ export const constantRoutes = [
         path: '/sku',
         name: 'Sku',
         component: () => import('@/views/product/Sku'),
-        meta: {title:'SKU'}
+        meta: {title:'SKU管理'}
       },
       {
         path: '/spu',
         name: 'Spu',
         component: () => import('@/views/product/Spu'),
-        meta: {title:'SPU'}
+        meta: {title:'SPU管理'}
       }
     ]
   },

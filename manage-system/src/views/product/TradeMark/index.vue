@@ -75,11 +75,11 @@
       :visible.sync="dialogFormVisible"
     >
       <!-- :model 表单数据收集到哪个对象身上，&表单验证 -->
-      <el-form style="width: 80%" :model="tmForm">
-        <el-form-item label="品牌名称" :label-width="'100px'">
+      <el-form style="width: 80%" :model="tmForm" :rules="rules" ref="ruleForm">
+        <el-form-item label="品牌名称" :label-width="'100px'" prop="tmName">
           <el-input autocomplete="off" v-model="tmForm.tmName"></el-input>
         </el-form-item>
-        <el-form-item label="Logo" :label-width="'100px'">
+        <el-form-item label="Logo" :label-width="'100px'" prop="logoUrl">
           <!-- 图片不能用v-model，因为不是表单元素 -->
           <el-upload
             class="avatar-uploader"
@@ -119,6 +119,12 @@ export default {
         // 品牌信息表单数据
         tmName: "",
         logoUrl: "",
+      },
+      rules: {
+        tmName: [
+          { required: true, message: "请输入品牌名称", trigger: "blur" },
+        ],
+        logoUrl: [{ required: true, message: "请选择Logo上传" }],
       },
     };
   },
@@ -180,22 +186,31 @@ export default {
       return permit;
     },
     // 点击确定时提交or更新数据
-    async addOrUpdateTrademark() {
-      console.log("当前表单", this.tmForm);
-      this.dialogFormVisible = false;
-      let res = await this.$API.trademark.reqAddOrUpdateTrademark(this.tmForm);
-      if (res.code == 200) {
-        this.$message({
-          message: this.tmForm.id ? "修改品牌信息成功" : "添加品牌成功",
-          type: "success",
-        });
-        // 如果添加品牌停留在第1页，如果是修改则留在当前页
-        this.getPageList(this.tmForm.id ? this.page : 1); // 需要再次请求列表数据
-      } else {
-        return Promise.reject(
-          new Error(this.tmForm.id ? "修改品牌信息失败" : "添加品牌失败")
-        );
-      }
+    addOrUpdateTrademark() {
+      this.$refs.ruleForm.validate(async (valid) => {
+        // async要写在最近的那层外边
+        if (valid) {
+          // 表单验证通过后再去提交
+          this.dialogFormVisible = false;
+          let res = await this.$API.trademark.reqAddOrUpdateTrademark(
+            this.tmForm
+          );
+          if (res.code == 200) {
+            this.$message({
+              message: this.tmForm.id ? "修改品牌信息成功" : "添加品牌成功",
+              type: "success",
+            });
+            // 如果添加品牌停留在第1页，如果是修改则留在当前页
+            this.getPageList(this.tmForm.id ? this.page : 1); // 需要再次请求列表数据
+          } else {
+            return Promise.reject(
+              new Error(this.tmForm.id ? "修改品牌信息失败" : "添加品牌失败")
+            );
+          }
+        } else {
+          return false;
+        }
+      });
     },
   },
 };

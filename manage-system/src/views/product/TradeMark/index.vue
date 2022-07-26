@@ -45,7 +45,11 @@
             @click="updateTradeMark(row)"
             >编辑</el-button
           >
-          <el-button type="danger" icon="el-icon-delete" size="mini"
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            @click="deleteTrademark(row)"
             >删除</el-button
           >
         </template>
@@ -146,7 +150,7 @@ export default {
         return Promise.reject(new Error("请求品牌列表数据失败"));
       }
     },
-    // handleCurrentPage(cPage) {
+    // handleCurrentPage(cPage) { // 将该功能集成至getPageList里了
     //   // 点击某一页时从新发送请求并显示回传
     //   this.page = cPage;
     //   this.getPageList(); // 从新获取当前页的数据
@@ -211,6 +215,33 @@ export default {
           return false;
         }
       });
+    },
+    // 删除当前品牌
+    deleteTrademark(row) {
+      this.$confirm(`确定删除『${row.tmName}』么？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true,
+      })
+        .then(async () => {
+          let res = await this.$API.trademark.reqDeleteTrademark({ ...row });
+          if (res.code == 200) {
+            this.$message({
+              type: "success",
+              message: "删除成功!",
+            });
+          } else {
+            return Promise.reject(new Error("删除当前品牌数据失败"));
+          }
+          this.getPageList(this.list.length > 1 ? this.page : this.page - 1); // 当前页有数据的话就留在当前页，否则回到上一页
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
 };

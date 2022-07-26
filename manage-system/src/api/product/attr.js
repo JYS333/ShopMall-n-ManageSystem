@@ -14,6 +14,6 @@ export const reqCategory3List = (category2Id) => {
     return request({url:`/admin/product/getCategory3/${category2Id}`, method:'get'})
 }
 // 通过三级分类获取列表数据
-export const reqCertainCategory = () => {
-    return request({url:'', method:'get'})
+export const reqCertainCategory = (data) => { // data: {category1Id:'', category2Id:'', category3Id:''}
+    return request({url:`/admin/product/attrInfoList/${data.category1Id}/${data.category2Id}/${data.category3Id}`, method:'get'})
 }

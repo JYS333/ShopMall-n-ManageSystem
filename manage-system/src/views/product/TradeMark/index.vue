@@ -3,6 +3,7 @@
     <!-- 添加按钮 -->
     <el-button
       type="primary"
+      size="small"
       icon="el-icon-plus"
       style="margin: 10px 0 20px"
       @click="showAddDialog"

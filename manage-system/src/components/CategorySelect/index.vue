@@ -115,8 +115,8 @@ export default {
       this.cForm.category3Id = "";
     },
     handle3Change() {
-      // 当3级分类value变化时
-      console.log(this.cForm);
+      // 当3级分类value变化时，用emit将数据发送给父组件
+      this.$emit("getCategoryId", this.cForm);
     },
   },
 };

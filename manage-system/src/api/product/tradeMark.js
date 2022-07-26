@@ -8,7 +8,7 @@ export const reqTrademarkList = (page, limit) => {
 // 添加or更新品牌信息
 export const reqAddOrUpdateTrademark = (trademark) => {
     if(trademark.id){ // 根据id去更新
-        return request({url: '/admin/product/baseTrademark/update', method: 'put', data: trademark})
+        return request({url: '/admin/product/baseTrademark/update', method:'put', data: trademark})
     }else{ // 直接添加
         return request({url:'/admin/product/baseTrademark/save', method:'post', data: trademark})
     }

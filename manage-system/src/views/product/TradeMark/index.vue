@@ -36,12 +36,13 @@
         /></template>
       </el-table-column>
       <el-table-column prop="prop" label="操作" width="300" align="center">
-        <template slot-scope="{}">
+        <!-- row就是对应的那一行的品牌信息 -->
+        <template slot-scope="{ row }">
           <el-button
             type="warning"
             icon="el-icon-edit"
             size="mini"
-            @click="updateTradeMark"
+            @click="updateTradeMark(row)"
             >编辑</el-button
           >
           <el-button type="danger" icon="el-icon-delete" size="mini"
@@ -69,7 +70,10 @@
     >
     </el-pagination>
     <!-- 对话框 -->
-    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="tmForm.id ? '修改品牌信息' : '添加品牌'"
+      :visible.sync="dialogFormVisible"
+    >
       <!-- :model 表单数据收集到哪个对象身上，&表单验证 -->
       <el-form style="width: 80%" :model="tmForm">
         <el-form-item label="品牌名称" :label-width="'100px'">
@@ -87,7 +91,7 @@
             <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <div slot="tip" class="el-upload__tip">
-              只能上传jpg/jpeg文件，且不超过2M
+              只能上传 jpg/png 文件，且不超过2M
             </div>
           </el-upload>
         </el-form-item>
@@ -152,8 +156,9 @@ export default {
       this.tmForm = { tmName: "", logoUrl: "" };
     },
     // 点击编辑按钮
-    updateTradeMark() {
+    updateTradeMark(row) {
       this.dialogFormVisible = true;
+      this.tmForm = { ...row }; // 利用浅拷贝将基本数据类型全部拷贝一份，不然tmForm和row指针指向同一个数据，改了row，tmForm会跟着变的，那关了弹窗的话也会看到表格里的数据跟着变了
     },
     // 图片上传成功
     handleAvatarSuccess(res, file) {
@@ -162,26 +167,33 @@ export default {
     // 上传图片之前
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
+      const isPNG = file.type === "image/png";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+      if (!isJPG && !isPNG) {
+        this.$message.error("上传图片只能是 JPG/PNG 格式!");
       }
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error("上传图片大小不能超过 2MB!");
       }
-      return isJPG && isLt2M;
+      let permit = (isJPG && isLt2M) || (isJPG && isLt2M);
+      return permit;
     },
     // 点击确定时提交or更新数据
     async addOrUpdateTrademark() {
+      console.log("当前表单", this.tmForm);
       this.dialogFormVisible = false;
       let res = await this.$API.trademark.reqAddOrUpdateTrademark(this.tmForm);
       if (res.code == 200) {
-        this.$message.success(this.tmForm.id ? "修改品牌成功" : "添加品牌成功");
-        this.getPageList(); // 需要再次请求列表数据
+        this.$message({
+          message: this.tmForm.id ? "修改品牌信息成功" : "添加品牌成功",
+          type: "success",
+        });
+        // 如果添加品牌停留在第1页，如果是修改则留在当前页
+        this.getPageList(this.tmForm.id ? this.page : 1); // 需要再次请求列表数据
       } else {
-        return new Promise.reject(
-          new Error(this.tmForm.id ? "修改品牌信息失败" : "添加品牌信息失败")
+        return Promise.reject(
+          new Error(this.tmForm.id ? "修改品牌信息失败" : "添加品牌失败")
         );
       }
     },

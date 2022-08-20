@@ -17,3 +17,7 @@ export const reqCategory3List = (category2Id) => {
 export const reqCertainCategory = (data) => { // data: {category1Id:'', category2Id:'', category3Id:''}
     return request({url:`/admin/product/attrInfoList/${data.category1Id}/${data.category2Id}/${data.category3Id}`, method:'get'})
 }
+// 添加属性与属性值
+export const reqSaveAttrInfo = (data) => {
+    return request({url:'/admin/product/saveAttrInfo', method:'post', data})
+}

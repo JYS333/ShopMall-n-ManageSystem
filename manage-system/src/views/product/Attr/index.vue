@@ -14,7 +14,7 @@
           type="primary"
           style="margin-bottom: 20px"
           :disabled="ids.category3Id ? false : true"
-          @click="isShowTable = false"
+          @click="addAttr"
         >
           添加属性
         </el-button>
@@ -84,17 +84,27 @@
       </div>
       <!-- 修改属性form -->
       <div v-show="!isShowTable">
-        <el-form inline>
+        <el-form inline :model="attrInfo">
           <el-form-item label="属性名称">
-            <el-input placeholder="请输入属性名"></el-input>
+            <el-input
+              v-model="attrInfo.attrName"
+              placeholder="请输入属性名"
+            ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-plus" type="primary"> 添加 </el-button>
+            <el-button
+              icon="el-icon-plus"
+              type="primary"
+              @click="addAttrValue"
+              :disabled="attrInfo.attrName == '' ? true : false"
+            >
+              添加
+            </el-button>
             <el-button> 取消 </el-button>
           </el-form-item>
         </el-form>
         <el-table
-          :data="attrList"
+          :data="attrInfo.attrValueList"
           style="width: 100%; margin-bottom: 20px"
           border
         >
@@ -109,36 +119,23 @@
           </el-table-column>
           <!-- prop:attrName 属性名称 -->
           <el-table-column prop="prop" label="属性名称" width="width">
-          </el-table-column>
-          <!-- prop:attrName 属性值列表 -->
-          <!-- <el-table-column
-            prop="prop"
-            label="属性值列表"
-            width="width"
-            align="left"
-          >
             <template slot-scope="{ row }">
-              <el-tag
-                v-for="(attr, index) in row.attrValueList"
-                :key="index"
-                style="margin-right: 10px"
-              >
-                {{ attr.valueName }}
-              </el-tag>
-            </template>
-          </el-table-column> -->
-          <el-table-column prop="prop" label="操作" width="300" align="center">
-            <!-- row就是对应的那一行的品牌信息 -->
-            <template>
-              <el-button
-                type="warning"
-                icon="el-icon-edit"
+              <el-input
+                placeholder="请输入属性值名称"
+                v-model="row.valueName"
                 size="mini"
-                @click="isShowTable = false"
               >
-                编辑
-              </el-button>
-              <el-button type="danger" icon="el-icon-delete" size="mini">
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="prop" label="操作" width="300" align="center">
+            <template slot-scope="{ row }">
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                @click="deleteCurrentVal(row)"
+              >
                 删除
               </el-button>
             </template>
@@ -165,6 +162,13 @@ export default {
         category2Id: "",
         category3Id: "",
       },
+      // 收集新增，修改属性
+      attrInfo: {
+        attrName: "",
+        attrValueList: [],
+        categoryId: 0, // 三级分类id
+        categoryLevel: 3,
+      },
     };
   },
   methods: {
@@ -181,6 +185,25 @@ export default {
       // 自定义时间回调，data是子组件给父组件传递的数据
       this.ids = { ...data };
       this.getAttrList(data);
+    },
+    addAttr() {
+      this.isShowTable = false;
+      this.attrInfo = {
+        attrName: "",
+        attrValueList: [],
+        categoryId: this.ids.category3Id, // 三级分类id
+        categoryLevel: 3,
+      };
+    },
+    addAttrValue() {
+      // attrId: 是添加的对应的属性的id，目前是添加属性操作，还没有响应属性的id，所以带给服务器的id为undefined
+      this.attrInfo.attrValueList.push({
+        attrId: undefined, // 相应的属性名的id
+        valueName: "",
+      });
+    },
+    deleteCurrentVal(value) {
+      console.log(value);
     },
   },
 };

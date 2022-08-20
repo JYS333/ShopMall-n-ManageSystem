@@ -201,7 +201,7 @@ export default {
     addAttrValue() {
       // attrId: 是添加的对应的属性的id，目前是添加属性操作，还没有响应属性的id，所以带给服务器的id为undefined
       this.attrInfo.attrValueList.push({
-        attrId: undefined, // 相应的属性名的id
+        attrId: this.attrInfo.id, // 相应的属性名的id
         valueName: "",
       });
     },

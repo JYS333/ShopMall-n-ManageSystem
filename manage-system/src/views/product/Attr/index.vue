@@ -56,18 +56,19 @@
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="300" align="center">
             <!-- row就是对应的那一行的品牌信息 -->
-            <template>
+            <template slot-scope="{ row }">
               <el-button
                 type="warning"
                 icon="el-icon-edit"
                 size="mini"
-                @click="isShowTable = false"
-              >
-                编辑
-              </el-button>
-              <el-button type="danger" icon="el-icon-delete" size="mini">
-                删除
-              </el-button>
+                @click="editCurrentVal(row)"
+              ></el-button>
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                @click="deleteCurrentVal(row)"
+              ></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -149,6 +150,7 @@
 </template>
 
 <script>
+import cloneDeep from "lodash/cloneDeep";
 export default {
   data() {
     return {
@@ -156,7 +158,7 @@ export default {
       limit: 5, // 当前页数展示条数
       total: 0, // 数据总数
       attrList: [], // 展示的列表信息
-      isShowTable: false, // 是否显示表格
+      isShowTable: true, // 是否显示表格
       ids: {
         category1Id: "",
         category2Id: "",
@@ -187,6 +189,7 @@ export default {
       this.getAttrList(data);
     },
     addAttr() {
+      // 在点击添加的时候清空列表数据
       this.isShowTable = false;
       this.attrInfo = {
         attrName: "",
@@ -202,6 +205,13 @@ export default {
         valueName: "",
       });
     },
+    // 编辑当前属性
+    editCurrentVal(value) {
+      this.isShowTable = false;
+      // 将选中的属性赋值给attrInfo，用来展示
+      this.attrInfo = cloneDeep(value); // value => row 对象，这次要用深拷贝解决嵌套引用类型的对象复制
+    },
+    // 删除当前数据
     deleteCurrentVal(value) {
       console.log(value);
     },

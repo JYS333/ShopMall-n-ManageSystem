@@ -125,8 +125,13 @@
                 placeholder="请输入属性值名称"
                 v-model="row.valueName"
                 size="mini"
-              >
-              </el-input>
+                @blur="toSpan(row)"
+                @keyup.native.enter="toSpan(row)"
+                v-if="row.showInput"
+              ></el-input>
+              <span v-else @click="toInput(row)" style="display: block">
+                {{ row.valueName }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="300" align="center">
@@ -188,6 +193,7 @@ export default {
       this.ids = { ...data };
       this.getAttrList(data);
     },
+    // 为当前三级分类属性新增大属性
     addAttr() {
       // 在点击添加的时候清空列表数据
       this.isShowTable = false;
@@ -198,11 +204,13 @@ export default {
         categoryLevel: 3,
       };
     },
+    // 为当前三级分类属性添加新的小属性
     addAttrValue() {
       // attrId: 是添加的对应的属性的id，目前是添加属性操作，还没有响应属性的id，所以带给服务器的id为undefined
       this.attrInfo.attrValueList.push({
         attrId: this.attrInfo.id, // 相应的属性名的id
         valueName: "",
+        showInput: true, // 给每个属性都加上，用来分别控制添加属性时输入框focus和blur时显示哪个
       });
     },
     // 编辑当前属性
@@ -210,10 +218,37 @@ export default {
       this.isShowTable = false;
       // 将选中的属性赋值给attrInfo，用来展示
       this.attrInfo = cloneDeep(value); // value => row 对象，这次要用深拷贝解决嵌套引用类型的对象复制
+
+      this.attrInfo.attrValueList.forEach(item => {
+        // 因为Vue无法探测到普通的新增的属性，所以不能写item.showInput=false，所以要用$set设置响应式属性，$set必须用于响应式对象上
+        this.$set(item, 'showInput', false);
+      })
     },
     // 删除当前数据
     deleteCurrentVal(value) {
       console.log(value);
+    },
+    // 切换为查看模式 imput => span
+    toSpan(row) {
+      if (row.valueName.trim() == "") {
+        this.$message("不能传入空属性");
+        return;
+      }
+      let isRepeat =  this.attrInfo.attrValueList.some((data)=> {
+        if(row != data){
+          if(row.valueName == data.valueName) return true;// 除自身外有相等的时候即重复
+        }
+      })
+      if(isRepeat){
+        this.$message("当前属性已重复");
+        return; 
+      }
+      // 只有在有光标时才会执行
+      row.showInput = false;
+    },
+    // 切换为编辑模式 span => input
+    toInput(row) {
+      row.showInput = true;
     },
   },
 };

@@ -2,7 +2,7 @@
   <div>
     <!-- 第一个卡片：三级联动管理 -->
     <el-card style="margin: 0 0 20px">
-      <CategorySelect @getCategoryId="getCategoryId" />
+      <CategorySelect @getCategoryId="getCategoryId" :show="!isShowTable"/>
     </el-card>
     <!-- 第二个卡片 -->
     <el-card>
@@ -101,7 +101,7 @@
             >
               添加
             </el-button>
-            <el-button> 取消 </el-button>
+            <!-- <el-button> 取消 </el-button> -->
           </el-form-item>
         </el-form>
         <el-table
@@ -120,34 +120,38 @@
           </el-table-column>
           <!-- prop:attrName 属性名称 -->
           <el-table-column prop="prop" label="属性名称" width="width">
-            <template slot-scope="{ row }">
+            <template slot-scope="{ row, $index }">
               <el-input
                 placeholder="请输入属性值名称"
                 v-model="row.valueName"
                 size="mini"
                 @blur="toSpan(row)"
                 @keyup.native.enter="toSpan(row)"
+                :ref="$index"
                 v-if="row.showInput"
               ></el-input>
-              <span v-else @click="toInput(row)" style="display: block">
+              <span v-else @click="toInput(row, $index)" style="display: block">
                 {{ row.valueName }}
               </span>
             </template>
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="300" align="center">
-            <template slot-scope="{ row }">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-                @click="deleteCurrentVal(row)"
-              >
-                删除
-              </el-button>
+            <template slot-scope="{ row, $index }">
+              <!-- 气泡确认删除当前小属性标签  -->
+                <el-popconfirm :title="`确定删除『${row.valueName}』吗？`" @onConfirm="deleteCurrentVal($index)">
+                  <el-button 
+                  slot="reference" 
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  >
+                    删除
+                  </el-button>
+                </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="addOrUpdateAttrInfo" :disabled="attrInfo.attrValueList.length<1">保存</el-button>
         <el-button @click="isShowTable = true">取消</el-button>
       </div>
     </el-card>
@@ -156,6 +160,7 @@
 
 <script>
 import cloneDeep from "lodash/cloneDeep";
+import { type } from "os";
 export default {
   data() {
     return {
@@ -193,7 +198,7 @@ export default {
       this.ids = { ...data };
       this.getAttrList(data);
     },
-    // 为当前三级分类属性新增大属性
+    // 切换为添加属性页面，为当前三级分类属性新增大属性
     addAttr() {
       // 在点击添加的时候清空列表数据
       this.isShowTable = false;
@@ -212,6 +217,10 @@ export default {
         valueName: "",
         showInput: true, // 给每个属性都加上，用来分别控制添加属性时输入框focus和blur时显示哪个
       });
+      // 同样用$nextTick获取input组件并聚焦
+      this.$nextTick(() => {
+        this.$refs[this.attrInfo.attrValueList.length - 1].focus();
+      })
     },
     // 编辑当前属性
     editCurrentVal(value) {
@@ -222,11 +231,11 @@ export default {
       this.attrInfo.attrValueList.forEach(item => {
         // 因为Vue无法探测到普通的新增的属性，所以不能写item.showInput=false，所以要用$set设置响应式属性，$set必须用于响应式对象上
         this.$set(item, 'showInput', false);
-      })
+      }) 
     },
     // 删除当前数据
-    deleteCurrentVal(value) {
-      console.log(value);
+    deleteCurrentVal(index) {
+      this.attrInfo.attrValueList.splice(index, 1); 
     },
     // 切换为查看模式 imput => span
     toSpan(row) {
@@ -247,8 +256,28 @@ export default {
       row.showInput = false;
     },
     // 切换为编辑模式 span => input
-    toInput(row) {
+    toInput(row, index) {
       row.showInput = true;
+      // this.$refs[index] 不行 因为vue会等函数体全部执行完后再去渲染，因此不能直接在同步中获取到input组件
+      // nextTick会在所有节点渲染完毕后执行一次 因此保证能拿到input组件 
+      this.$nextTick(() => {
+        this.$refs[index].focus();
+      })
+    },
+    // 点击保存时将新的列表属性上传至服务器
+    async addOrUpdateAttrInfo(){
+      this.attrInfo.attrValueList = this.attrInfo.attrValueList.filter((item) => {
+        if(item.valueName != ''){
+          delete item.showInput;
+          return true;
+        }
+      });
+      try {
+        await this.$API.attr.reqAddOrUpdateAttrInfo(this.attrInfo);
+        this.$message({type: 'success', message:"保存成功"});
+        this.isShowTable = true;
+      } catch (error) {
+      }
     },
   },
 };

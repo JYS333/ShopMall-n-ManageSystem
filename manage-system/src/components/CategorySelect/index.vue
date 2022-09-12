@@ -8,6 +8,7 @@
             v-model="cForm.category1Id"
             placeholder="请选择"
             @change="handle1Change"
+            :disabled="show"
           >
             <!-- select必须双向绑定值，option必须绑定value值 -->
             <el-option
@@ -24,6 +25,7 @@
             v-model="cForm.category2Id"
             placeholder="请选择"
             @change="handle2Change"
+            :disabled="show"
           >
             <el-option
               v-for="c2 in list2"
@@ -39,6 +41,7 @@
             v-model="cForm.category3Id"
             placeholder="请选择"
             @change="handle3Change"
+            :disabled="show"
           >
             <el-option
               v-for="c3 in list3"
@@ -57,6 +60,7 @@
 <script>
 export default {
   name: "CategorySelect",
+  props:['show'],
   data() {
     return {
       value1: "",

@@ -16,6 +16,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import CategorySelect from '@/components/CategorySelect';
+import HintButton from '@/components/HintButton';
 
 /**
  * If you don't want to use mock-server
@@ -36,6 +37,7 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.component(CategorySelect.name, CategorySelect) // 将三级联动选择组件设为全局组件，第一个参数为name，第二个为组件
+Vue.component(HintButton.name, HintButton) // 将带提示的按钮组件设为全局组件，第一个参数为name，第二个为组件
 
 Vue.config.productionTip = false
 

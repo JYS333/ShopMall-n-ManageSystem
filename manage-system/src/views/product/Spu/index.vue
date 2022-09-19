@@ -61,7 +61,7 @@ export default {
       total: 0, // 数据总数
       isShowTable: true, // 是否显示表格
       show: true, // 控制三级联动的可操作性
-      scene: 1, // 0代表SPU列表数据 1添加SPU|修改SPU页面 2修改SKU页面
+      scene: 0, // 0代表SPU列表数据 1添加SPU|修改SPU页面 2修改SKU页面
       ids: {
         category1Id: "",
         category2Id: "",
@@ -100,8 +100,8 @@ export default {
     // 修改Spu
     updateSpu(row, index){
       this.scene = 1;
-      // 通过ref让父组件拿到子组件的方法
-      this.$refs.SpuForm.initSpuData();
+      // 通过ref让父组件拿到子组件的方法，初始化spu数据
+      this.$refs.SpuForm.initSpuData(this.ids.category3Id);
     },
     // 切换页面 自定义事件回调
     goScene(type){
